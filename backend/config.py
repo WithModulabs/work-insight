@@ -37,13 +37,14 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
     ]
     
-    # Email 설정 (나중에 구현)
-    SMTP_SERVER: str = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
-    SMTP_USER: str = os.getenv("SMTP_USER", "")
-    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
+    # Azure AD / Office 365 이메일 발송 설정
+    AZURE_TENANT_ID: str = os.getenv("AZURE_TENANT_ID", "")
+    AZURE_CLIENT_ID: str = os.getenv("AZURE_CLIENT_ID", "")
+    AZURE_CLIENT_SECRET: str = os.getenv("AZURE_CLIENT_SECRET", "")
+    EMAIL_SENDER: str = os.getenv("EMAIL_SENDER", "JoniS@M365x12195465.OnMicrosoft.com")
+    EMAIL_ENABLED: bool = os.getenv("EMAIL_ENABLED", "False").lower() == "true"
 
-    # SharePoint 이메일 저장 설정
+    # SharePoint 이메일 저장 설정 (Microsoft Graph)
     MICROSOFT_TENANT_ID: str = os.getenv("MICROSOFT_TENANT_ID", "")
     MICROSOFT_CLIENT_ID: str = os.getenv("MICROSOFT_CLIENT_ID", "")
     MICROSOFT_CLIENT_SECRET: str = os.getenv("MICROSOFT_CLIENT_SECRET", "")
@@ -52,10 +53,7 @@ class Settings(BaseSettings):
     GRAPH_MAILBOX_USER_ID: str = os.getenv("GRAPH_MAILBOX_USER_ID", "")
     GRAPH_NOTIFICATION_URL: str = os.getenv("GRAPH_NOTIFICATION_URL", "")
     GRAPH_SUBSCRIPTION_CLIENT_STATE: str = os.getenv("GRAPH_SUBSCRIPTION_CLIENT_STATE", "")
-    GRAPH_SUBSCRIPTION_RESOURCE: str = os.getenv(
-        "GRAPH_SUBSCRIPTION_RESOURCE",
-        "",
-    )
+    GRAPH_SUBSCRIPTION_RESOURCE: str = os.getenv("GRAPH_SUBSCRIPTION_RESOURCE", "")
     GRAPH_SUBSCRIPTION_EXPIRATION_MINUTES: int = int(
         os.getenv("GRAPH_SUBSCRIPTION_EXPIRATION_MINUTES", "1440")
     )
