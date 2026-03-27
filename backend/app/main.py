@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from config import settings
-from app.api import reports, oneone, dashboard, copilot
+from app.api import reports, oneone, dashboard, copilot, email_storage
 
 
 # Lifespan context
@@ -40,6 +40,7 @@ app.include_router(reports.router, prefix="/api/reports", tags=["퇴근보고"])
 app.include_router(oneone.router, prefix="/api/oneone", tags=["1:1 상담"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["대시보드"])
 app.include_router(copilot.router, prefix="/api/copilot", tags=["Copilot"])
+app.include_router(email_storage.router, prefix="/api/email-storage", tags=["이메일 저장"])
 
 
 @app.get("/", tags=["Root"])
