@@ -33,6 +33,20 @@ async def process_copilot_query(
     
     # Copilot 엔진으로 처리
     result = copilot_engine.process_query(request.query_text, user_role, team_id)
+
+    response_text = result.get("response", "")
+    if isinstance(response_text, dict):
+        response_text = response_text.get("answer", str(response_text))
+
+    evidence = result.get("evidence", [])
+    if isinstance(evidence, dict):
+        evidence = [evidence]
+    elif not isinstance(evidence, list):
+        evidence = []
+
+    follow_ups = result.get("follow_ups", [])
+    if not isinstance(follow_ups, list):
+        follow_ups = []
     
     # 히스토리 저장
     query_history.append({
@@ -44,10 +58,10 @@ async def process_copilot_query(
     })
     
     return {
-        "response_text": result["response"],
-        "evidence": result["evidence"],
+        "response_text": response_text,
+        "evidence": evidence,
         "confidence_score": result["confidence"],
-        "suggested_follow_ups": result["follow_ups"],
+        "suggested_follow_ups": follow_ups,
     }
 
 

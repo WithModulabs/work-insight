@@ -3,6 +3,9 @@ from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 import json
 import math
+import httpx
+
+from config import settings
 
 
 class CopilotEngine:
@@ -20,6 +23,7 @@ class CopilotEngine:
     def __init__(self, db_context=None):
         self.db_context = db_context
         self.query_history = []
+        self.orchestration_endpoint = settings.ORCHESTRATION_USER_ENDPOINT
     
     def process_query(self, query: str, user_role: str, team_id: Optional[int] = None) -> Dict:
         """
@@ -27,6 +31,16 @@ class CopilotEngine:
         """
         # 질의 의도 분류
         intent = self._classify_intent(query)
+
+        # 오케스트레이션 에이전트가 연결되어 있으면 우선 사용
+        orchestrated_result = self._try_orchestration_agent(
+            query=query,
+            intent=intent,
+            user_role=user_role,
+            team_id=team_id,
+        )
+        if orchestrated_result:
+            return orchestrated_result
         
         # 권한 기반 검색 범위 결정
         search_scope = self._determine_search_scope(user_role, team_id)
@@ -49,6 +63,83 @@ class CopilotEngine:
             "response": response,
             "evidence": evidence,
             "confidence": self._calculate_confidence(len(relevant_docs), evidence),
+            "follow_ups": follow_ups,
+        }
+
+    def _try_orchestration_agent(
+        self,
+        query: str,
+        intent: str,
+        user_role: str,
+        team_id: Optional[int],
+    ) -> Optional[Dict]:
+        if not self.orchestration_endpoint:
+            return None
+
+        headers = {
+            "Content-Type": "application/json",
+        }
+        if settings.ORCHESTRATION_API_KEY:
+            headers["api-key"] = settings.ORCHESTRATION_API_KEY
+        if settings.ORCHESTRATION_BEARER_TOKEN:
+            headers["Authorization"] = f"Bearer {settings.ORCHESTRATION_BEARER_TOKEN}"
+
+        payload = {
+            "query": query,
+            "intent": intent,
+            "user_role": user_role,
+            "team_id": team_id,
+        }
+
+        endpoint = self.orchestration_endpoint.strip()
+        candidate_urls: List[str] = [endpoint]
+        if "/api/projects/" in endpoint and not endpoint.endswith("/"):
+            candidate_urls.insert(0, endpoint + "/")
+
+        body = None
+        try:
+            with httpx.Client(timeout=settings.ORCHESTRATION_TIMEOUT_SECONDS) as client:
+                for url in dict.fromkeys(candidate_urls):
+                    try:
+                        response = client.post(url, headers=headers, json=payload)
+                        response.raise_for_status()
+                        body = response.json()
+                        break
+                    except Exception:
+                        continue
+        except Exception:
+            return None
+
+        if body is None:
+            return None
+
+        response_text = (
+            body.get("response_text")
+            or body.get("response")
+            or body.get("answer")
+            or "오케스트레이션 에이전트 응답을 받았지만 본문이 비어 있습니다."
+        )
+        if isinstance(response_text, dict):
+            response_text = response_text.get("answer", json.dumps(response_text, ensure_ascii=False))
+
+        evidence = body.get("evidence")
+        if not isinstance(evidence, list):
+            evidence = []
+
+        follow_ups = body.get("suggested_follow_ups") or body.get("follow_ups") or []
+        if not isinstance(follow_ups, list):
+            follow_ups = []
+
+        confidence = body.get("confidence_score")
+        if not isinstance(confidence, (float, int)):
+            confidence = body.get("confidence", 0.7)
+
+        return {
+            "query": query,
+            "intent": intent,
+            "response": str(response_text),
+            "evidence": evidence,
+            "confidence": float(confidence),
             "follow_ups": follow_ups,
         }
     
@@ -270,7 +361,7 @@ class CopilotEngine:
             }
         ]
     
-    def _generate_response(self, query: str, intent: str, evidence: Dict, user_role: str) -> Dict:
+    def _generate_response(self, query: str, intent: str, evidence: Dict, user_role: str) -> str:
         """
         최종 답변 생성
         실제 구현에서는 LLM 사용
@@ -284,11 +375,7 @@ class CopilotEngine:
             "comparison": "이번 주가 지난 주 대비 더 많은 지연 신호를 보이고 있습니다.",
         }
         
-        return {
-            "answer": response_template.get(intent, "해당 질문에 대해 답변할 수 없습니다."),
-            "reasoning": evidence.get("summary", ""),
-            "sources": len(evidence.get("sources", [])),
-        }
+        return response_template.get(intent, "해당 질문에 대해 답변할 수 없습니다.")
     
     def _generate_follow_ups(self, query: str, intent: str) -> List[str]:
         """추천 후속 질문 생성"""

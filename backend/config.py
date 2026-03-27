@@ -63,6 +63,17 @@ class Settings(BaseSettings):
     GRAPH_SUBSCRIPTION_EXPIRATION_MINUTES: int = int(
         os.getenv("GRAPH_SUBSCRIPTION_EXPIRATION_MINUTES", "1440")
     )
+
+    # 오케스트레이션 에이전트 설정
+    ORCHESTRATION_USER_ENDPOINT: str = os.getenv(
+        "ORCHESTRATION_USER_ENDPOINT",
+        "",
+    )
+    ORCHESTRATION_API_KEY: str = os.getenv("ORCHESTRATION_API_KEY", "")
+    ORCHESTRATION_BEARER_TOKEN: str = os.getenv("ORCHESTRATION_BEARER_TOKEN", "")
+    ORCHESTRATION_TIMEOUT_SECONDS: float = float(
+        os.getenv("ORCHESTRATION_TIMEOUT_SECONDS", "20")
+    )
     
     # RAG 설정
     VECTOR_DB_TYPE: str = os.getenv("VECTOR_DB_TYPE", "chroma")  # chroma, faiss, pinecone
