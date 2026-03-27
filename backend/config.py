@@ -37,11 +37,12 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
     ]
     
-    # Email 설정 (나중에 구현)
-    SMTP_SERVER: str = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
-    SMTP_USER: str = os.getenv("SMTP_USER", "")
-    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
+    # Azure AD / Office 365 이메일 설정
+    AZURE_TENANT_ID: str = os.getenv("AZURE_TENANT_ID", "")
+    AZURE_CLIENT_ID: str = os.getenv("AZURE_CLIENT_ID", "")
+    AZURE_CLIENT_SECRET: str = os.getenv("AZURE_CLIENT_SECRET", "")
+    EMAIL_SENDER: str = os.getenv("EMAIL_SENDER", "JoniS@M365x12195465.OnMicrosoft.com")
+    EMAIL_ENABLED: bool = os.getenv("EMAIL_ENABLED", "False").lower() == "true"
     
     # RAG 설정
     VECTOR_DB_TYPE: str = os.getenv("VECTOR_DB_TYPE", "chroma")  # chroma, faiss, pinecone
