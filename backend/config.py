@@ -42,6 +42,24 @@ class Settings(BaseSettings):
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
     SMTP_USER: str = os.getenv("SMTP_USER", "")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
+
+    # SharePoint 이메일 저장 설정
+    MICROSOFT_TENANT_ID: str = os.getenv("MICROSOFT_TENANT_ID", "")
+    MICROSOFT_CLIENT_ID: str = os.getenv("MICROSOFT_CLIENT_ID", "")
+    MICROSOFT_CLIENT_SECRET: str = os.getenv("MICROSOFT_CLIENT_SECRET", "")
+    SHAREPOINT_SITE_ID: str = os.getenv("SHAREPOINT_SITE_ID", "")
+    SHAREPOINT_DRIVE_ID: str = os.getenv("SHAREPOINT_DRIVE_ID", "")
+    SHAREPOINT_EMAIL_FOLDER: str = os.getenv("SHAREPOINT_EMAIL_FOLDER", "inbound-emails")
+    GRAPH_MAILBOX_USER_ID: str = os.getenv("GRAPH_MAILBOX_USER_ID", "")
+    GRAPH_NOTIFICATION_URL: str = os.getenv("GRAPH_NOTIFICATION_URL", "")
+    GRAPH_SUBSCRIPTION_CLIENT_STATE: str = os.getenv("GRAPH_SUBSCRIPTION_CLIENT_STATE", "")
+    GRAPH_SUBSCRIPTION_RESOURCE: str = os.getenv(
+        "GRAPH_SUBSCRIPTION_RESOURCE",
+        "",
+    )
+    GRAPH_SUBSCRIPTION_EXPIRATION_MINUTES: int = int(
+        os.getenv("GRAPH_SUBSCRIPTION_EXPIRATION_MINUTES", "1440")
+    )
     
     # RAG 설정
     VECTOR_DB_TYPE: str = os.getenv("VECTOR_DB_TYPE", "chroma")  # chroma, faiss, pinecone

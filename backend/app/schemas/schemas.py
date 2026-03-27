@@ -1,6 +1,6 @@
 """Pydantic schemas for request/response validation"""
 from datetime import datetime
-from typing import Optional, List
+from typing import Any, Dict, Optional, List
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -225,3 +225,76 @@ class MorningBriefResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+class EmailAttachmentMetadata(BaseModel):
+    file_name: str
+    content_type: Optional[str] = None
+    size_bytes: Optional[int] = None
+
+
+class ReceivedEmailSaveRequest(BaseModel):
+    message_id: str = Field(..., min_length=3)
+    internet_message_id: Optional[str] = None
+    subject: str = Field(default="(no subject)", min_length=1)
+    from_address: EmailStr
+    to_addresses: List[EmailStr] = Field(default_factory=list)
+    cc_addresses: List[EmailStr] = Field(default_factory=list)
+    received_at: datetime
+    body_text: Optional[str] = None
+    body_html: Optional[str] = None
+    raw_mime_base64: Optional[str] = None
+    attachments: List[EmailAttachmentMetadata] = Field(default_factory=list)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+    sharepoint_folder: Optional[str] = None
+
+
+class SharePointStoredFile(BaseModel):
+    item_id: str
+    name: str
+    path: str
+    web_url: Optional[str] = None
+
+
+class ReceivedEmailSaveResponse(BaseModel):
+    stored_at: datetime
+    message_id: str
+    subject: str
+    sharepoint_folder: str
+    metadata_file: SharePointStoredFile
+    mime_file: Optional[SharePointStoredFile] = None
+
+
+class GraphSubscriptionCreateRequest(BaseModel):
+    mailbox_user_id: Optional[str] = None
+    notification_url: Optional[str] = None
+    client_state: Optional[str] = None
+    sharepoint_folder: Optional[str] = None
+    resource: Optional[str] = None
+    expiration_minutes: Optional[int] = Field(default=None, ge=15, le=4230)
+
+
+class GraphSubscriptionResponse(BaseModel):
+    id: str
+    resource: str
+    expiration_date_time: datetime
+    client_state: Optional[str] = None
+    notification_url: str
+
+
+class GraphWebhookNotification(BaseModel):
+    subscriptionId: str
+    changeType: str
+    resource: str
+    clientState: Optional[str] = None
+    tenantId: Optional[str] = None
+    subscriptionExpirationDateTime: Optional[datetime] = None
+
+
+class GraphWebhookPayload(BaseModel):
+    value: List[GraphWebhookNotification] = Field(default_factory=list)
+
+
+class GraphWebhookAcceptedResponse(BaseModel):
+    accepted: bool
+    notification_count: int
