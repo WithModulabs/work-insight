@@ -38,11 +38,11 @@ async def get_sharepoint_storage_status():
 
 @router.post("/sharepoint/store", response_model=ReceivedEmailSaveResponse)
 async def store_email_in_sharepoint(request: ReceivedEmailSaveRequest):
-    """Store a received email in SharePoint as JSON and optional EML."""
+    """Store a received email as an item in SharePoint RawWorkReports list."""
     try:
         return await sharepoint_email_storage.save_email(request)
     except SharePointConfigurationError as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except SharePointUploadError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
@@ -63,7 +63,6 @@ async def receive_graph_webhook(
     request: Request,
     background_tasks: BackgroundTasks,
     validationToken: str | None = Query(default=None),
-    sharepoint_folder: str | None = Query(default=None),
 ):
     """Accept Graph webhook validation and message notifications."""
     if validationToken:
@@ -76,7 +75,6 @@ async def receive_graph_webhook(
         background_tasks.add_task(
             _process_graph_notification,
             notification.model_dump(),
-            sharepoint_folder,
         )
 
     return {
@@ -85,8 +83,8 @@ async def receive_graph_webhook(
     }
 
 
-async def _process_graph_notification(notification: dict, sharepoint_folder: str | None) -> None:
+async def _process_graph_notification(notification: dict) -> None:
     try:
-        await graph_email_ingestion.process_notification(notification, sharepoint_folder=sharepoint_folder)
+        await graph_email_ingestion.process_notification(notification)
     except (GraphWebhookConfigurationError, GraphWebhookProcessingError, SharePointUploadError):
         return

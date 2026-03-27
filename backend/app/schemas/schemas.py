@@ -246,23 +246,20 @@ class ReceivedEmailSaveRequest(BaseModel):
     raw_mime_base64: Optional[str] = None
     attachments: List[EmailAttachmentMetadata] = Field(default_factory=list)
     metadata: Dict[str, Any] = Field(default_factory=dict)
-    sharepoint_folder: Optional[str] = None
 
 
-class SharePointStoredFile(BaseModel):
+class SharePointListItem(BaseModel):
     item_id: str
-    name: str
-    path: str
-    web_url: Optional[str] = None
+    list_item_url: Optional[str] = None
 
 
 class ReceivedEmailSaveResponse(BaseModel):
     stored_at: datetime
     message_id: str
     subject: str
-    sharepoint_folder: str
-    metadata_file: SharePointStoredFile
-    mime_file: Optional[SharePointStoredFile] = None
+    list_item_id: str
+    list_item_url: Optional[str] = None
+    field_count: int
 
 
 class GraphSubscriptionCreateRequest(BaseModel):

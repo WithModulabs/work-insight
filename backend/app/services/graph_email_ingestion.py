@@ -92,7 +92,7 @@ class GraphEmailIngestionService:
             "notification_url": body["notificationUrl"],
         }
 
-    async def process_notification(self, notification: dict, sharepoint_folder: Optional[str] = None) -> dict:
+    async def process_notification(self, notification: dict) -> dict:
         if not self._is_valid_client_state(notification.get("clientState")):
             raise GraphWebhookProcessingError("Invalid Graph clientState received.")
 
@@ -128,7 +128,6 @@ class GraphEmailIngestionService:
                 "resource": resource,
                 "tenant_id": notification.get("tenantId"),
             },
-            sharepoint_folder=sharepoint_folder,
         )
 
         try:
