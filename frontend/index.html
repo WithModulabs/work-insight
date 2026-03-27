@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkInsight - 경영 인사이트 Copilot</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 네비게이션 -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <h1>🎯 WorkInsight</h1>
+                <p>경영 인사이트 Copilot</p>
+            </div>
+            <div class="navbar-menu">
+                <a href="#home" class="nav-item active">홈</a>
+                <a href="#reports" class="nav-item">퇴근보고</a>
+                <a href="#dashboard" class="nav-item">대시보드</a>
+                <a href="#copilot" class="nav-item">Copilot</a>
+                <a href="#profile" class="nav-item">프로필</a>
+            </div>
+        </nav>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 홈 섹션 -->
+            <section id="home" class="section active">
+                <div class="welcome-banner">
+                    <h2>안녕하세요! 👋</h2>
+                    <p id="greeting">오늘도 함께 최고의 성과를 만들어봅시다</p>
+                </div>
+
+                <div class="grid-2">
+                    <!-- 오늘의 핵심 -->
+                    <div class="card">
+                        <h3>📋 오늘의 핵심</h3>
+                        <div id="daily-summary" class="card-content">
+                            <p>로딩 중...</p>
+                        </div>
+                    </div>
+
+                    <!-- 위험 신호 -->
+                    <div class="card alert">
+                        <h3>⚠️ 주의 신호</h3>
+                        <div id="risk-alerts" class="card-content">
+                            <p>신호 확인 중...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <!-- 제출률 -->
+                    <div class="card metrics">
+                        <h3>📊 제출률</h3>
+                        <div class="metric-value">87%</div>
+                        <div class="metric-label">금주 팀 제출률</div>
+                    </div>
+
+                    <!-- 만족도 -->
+                    <div class="card metrics">
+                        <h3>😊 만족도</h3>
+                        <div class="metric-value">3.8/5</div>
+                        <div class="metric-label">팀 평균 만족도</div>
+                    </div>
+
+                    <!-- 완료율 -->
+                    <div class="card metrics">
+                        <h3>✅ 완료율</h3>
+                        <div class="metric-value">73%</div>
+                        <div class="metric-label">액션아이템 완료</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 퇴근보고 섹션 -->
+            <section id="reports" class="section">
+                <h2>📝 퇴근보고</h2>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('report-new')">새로 작성</button>
+                    <button class="tab-btn" onclick="switchTab('report-list')">내 보고</button>
+                    <button class="tab-btn" onclick="switchTab('report-team')">팀 보고</button>
+                </div>
+
+                <!-- 새 보고서 작성 -->
+                <div id="report-new" class="tab-content active">
+                    <form id="report-form" class="form-grid">
+                        <div class="form-group">
+                            <label for="accomplished">오늘 한 일 *</label>
+                            <textarea id="accomplished" placeholder="오늘 완료한 업무를 입력하세요" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="not-completed">미완료 업무</label>
+                            <textarea id="not-completed" placeholder="완료하지 못한 업무가 있으면 입력하세요"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tomorrow-plan">내일 계획</label>
+                            <textarea id="tomorrow-plan" placeholder="내일 할 일을 입력하세요"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issues">이슈/장애요인</label>
+                            <textarea id="issues" placeholder="발생한 문제가 있으면 기술해주세요"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="support">지원 필요사항</label>
+                            <textarea id="support" placeholder="필요한 지원이 있으면 알려주세요"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="collaboration">협업 필요 대상</label>
+                            <input type="text" id="collaboration" placeholder="협력이 필요한 팀 또는 팀원">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fatigue">오늘 피로도</label>
+                            <div class="rating">
+                                <input type="range" id="fatigue" min="0" max="5" value="2" class="slider">
+                                <span id="fatigue-label">보통</span>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">제출하기</button>
+                            <button type="reset" class="btn btn-secondary">초기화</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 내 보고 목록 -->
+                <div id="report-list" class="tab-content">
+                    <div id="my-reports" class="report-list">
+                        <p>로딩 중...</p>
+                    </div>
+                </div>
+
+                <!-- 팀 보고 -->
+                <div id="report-team" class="tab-content">
+                    <div id="team-reports" class="report-list">
+                        <p>로딩 중...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 대시보드 섹션 -->
+            <section id="dashboard" class="section">
+                <h2>📊 대시보드</h2>
+                
+                <div class="dashboard-controls">
+                    <select id="dashboard-view" onchange="switchDashboard(this.value)">
+                        <option value="team">팀 대시보드</option>
+                        <option value="org">전사 대시보드</option>
+                        <option value="custom">맞춤 대시보드</option>
+                    </select>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- 팀 대시보드 -->
+                    <div id="team-dashboard" class="dashboard-view">
+                        <div class="card">
+                            <h3>👥 팀 현황</h3>
+                            <div class="dashboard-stat">
+                                <div>총 팀원: <span>8명</span></div>
+                                <div>보고 제출: <span>7/8</span></div>
+                                <div>평균 만족도: <span>3.9/5</span></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>🚨 긴급 이슈</h3>
+                            <ul class="issue-list">
+                                <li><strong>프로젝트 A:</strong> 진행 지연 (2일)</li>
+                                <li><strong>팀원 B:</strong> 과부하 신호</li>
+                                <li><strong>팀원 C:</strong> 1:1 필요</li>
+                            </ul>
+                        </div>
+
+                        <div class="card">
+                            <h3>📈 트렌드</h3>
+                            <div id="trend-chart">
+                                <p>차트 로딩 중...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 전사 대시보드 -->
+                    <div id="org-dashboard" class="dashboard-view" style="display:none;">
+                        <div class="card">
+                            <h3>🏢 전사 현황</h3>
+                            <div class="dashboard-stat">
+                                <div>총 팀: <span>8개</span></div>
+                                <div>팀원: <span>45명</span></div>
+                                <div>고위험 프로젝트: <span>3개</span></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>⚠️ 주요 위험 신호</h3>
+                            <ul class="issue-list">
+                                <li><strong>시스템 고도화:</strong> 위험도 82%</li>
+                                <li><strong>금용팀:</strong> 이탈 위험</li>
+                                <li><strong>영업팀:</strong> 번아웃 신호</li>
+                            </ul>
+                        </div>
+
+                        <div class="card">
+                            <h3>💪 조직 건강도</h3>
+                            <div class="health-score">
+                                <div class="score">72%</div>
+                                <div class="score-label">종합 건강도</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Copilot 섹션 -->
+            <section id="copilot" class="section">
+                <h2>🤖 경영 Copilot</h2>
+                
+                <div class="copilot-interface">
+                    <!-- 추천 질문 -->
+                    <div class="card">
+                        <h3>💡 추천 질문</h3>
+                        <div id="suggested-questions" class="question-list">
+                            <button class="question-btn" onclick="askCopilot('이번 주 가장 위험한 프로젝트는?')">
+                                이번 주 가장 위험한 프로젝트는?
+                            </button>
+                            <button class="question-btn" onclick="askCopilot('우리 팀에서 케어가 필요한 사람은?')">
+                                우리 팀에서 케어가 필요한 사람은?
+                            </button>
+                            <button class="question-btn" onclick="askCopilot('오늘 우선적으로 개입해야할 일이 무엇?')">
+                                오늘 우선적으로 개입해야할 일이 무엇?
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 질의 입력 -->
+                    <div class="card">
+                        <h3>🔍 자유 질의</h3>
+                        <form id="copilot-form" onsubmit="submitCopilotQuery(event)">
+                            <div class="input-group">
+                                <textarea id="copilot-query" placeholder="궁금한 것을 물어봐주세요..." required></textarea>
+                                <button type="submit" class="btn btn-primary">질의하기</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- 응답 -->
+                    <div id="copilot-response" class="card" style="display:none;">
+                        <h3>📝 응답</h3>
+                        <div id="response-content" class="response-box"></div>
+                        <div id="response-evidence" class="evidence-box"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 프로필 섹션 -->
+            <section id="profile" class="section">
+                <h2>👤 프로필</h2>
+                <div class="card profile-card">
+                    <div class="profile-header">
+                        <div class="avatar">👤</div>
+                        <div class="profile-info">
+                            <h3>김영희</h3>
+                            <p>팀장 | 마케팅팀</p>
+                            <p>가입: 2024년 1월</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <div class="stat-label">제출 횟수</div>
+                            <div class="stat-value">125</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">평균 만족도</div>
+                            <div class="stat-value">4.1</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">액션 완료</div>
+                            <div class="stat-value">18/25</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-settings">
+                        <h4>설정</h4>
+                        <label>
+                            <input type="checkbox" checked> 아침 브리핑 이메일
+                        </label>
+                        <label>
+                            <input type="checkbox" checked> 위험 신호 알람
+                        </label>
+                        <label>
+                            <input type="checkbox"> 주간 보고서
+                        </label>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>
