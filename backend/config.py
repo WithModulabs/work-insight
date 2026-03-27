@@ -36,6 +36,12 @@ class Settings(BaseSettings):
         "http://localhost:8000",
         "http://127.0.0.1:3000",
     ]
+
+    # SMTP
+    SMTP_SERVER: str = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: str = os.getenv("SMTP_USER", "")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
     
     # Azure AD / Office 365 이메일 발송 설정
     AZURE_TENANT_ID: str = os.getenv("AZURE_TENANT_ID", "")

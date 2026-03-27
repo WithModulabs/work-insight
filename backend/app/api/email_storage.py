@@ -31,7 +31,8 @@ async def get_sharepoint_storage_status():
     """Return whether SharePoint email storage is configured."""
     return {
         "configured": sharepoint_email_storage.is_configured(),
-        "default_folder": sharepoint_email_storage.default_folder,
+        "site_id": sharepoint_email_storage.site_id,
+        "list_id": sharepoint_email_storage.list_id,
         "graph": graph_email_ingestion.get_status(),
     }
 

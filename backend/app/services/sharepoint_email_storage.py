@@ -47,22 +47,24 @@ class SharePointEmailStorageService:
 
         storage_time = datetime.now(timezone.utc)
 
-        # Build list item fields
+        # Map payload to existing RawWorkReports internal column names.
         fields = {
             "Title": self._build_title(email),
-            "message_id": email.message_id,
-            "internet_message_id": email.internet_message_id or "",
-            "subject": email.subject,
-            "from_address": str(email.from_address),
-            "to_addresses": json.dumps([str(addr) for addr in email.to_addresses]),
-            "cc_addresses": json.dumps([str(addr) for addr in email.cc_addresses]),
-            "received_at": email.received_at.isoformat(),
-            "body_text": email.body_text or "",
-            "body_html": email.body_html or "",
-            "raw_mime_base64": email.raw_mime_base64 or "",
-            "attachments": json.dumps([att.model_dump() for att in email.attachments]),
-            "metadata": json.dumps(email.metadata),
-            "stored_at": storage_time.isoformat(),
+            "Sender": str(email.from_address),
+            "ReportContent": email.body_text or email.body_html or "",
+            "ReceivedTime": email.received_at.isoformat(),
+            "AISummary": json.dumps(
+                {
+                    "message_id": email.message_id,
+                    "subject": email.subject,
+                    "to_addresses": [str(addr) for addr in email.to_addresses],
+                    "cc_addresses": [str(addr) for addr in email.cc_addresses],
+                    "attachments": [att.model_dump() for att in email.attachments],
+                    "metadata": email.metadata,
+                    "stored_at": storage_time.isoformat(),
+                },
+                ensure_ascii=False,
+            ),
         }
 
         # Create list item via Graph API
@@ -75,6 +77,7 @@ class SharePointEmailStorageService:
         email: ReceivedEmailSaveRequest,
     ) -> dict:
         """Insert item into SharePoint list."""
+        token = await self.graph_client.get_access_token()
         url = (
             f"https://graph.microsoft.com/v1.0/sites/{self.site_id}/lists/{self.list_id}/items"
         )
@@ -87,6 +90,7 @@ class SharePointEmailStorageService:
             response = await self.graph_client.request(
                 method="POST",
                 url=url,
+                token=token,
                 json=payload,
                 timeout=30.0,
             )
